@@ -54,10 +54,6 @@ _ld_x11=
 
 _ascii=no
 
-_qt3=no
-_inc_qt3=
-_ld_qt3=
-
 _qt4=no
 _inc_qt4=
 _ld_qt4=
@@ -550,23 +546,6 @@ if test "$_pkg_config" != "no" ; then
         echores "no"
     fi
 
-    echocheck "Qt 3"
-
-    if $_pkg_config qt-mt --exists 1>/dev/null 2>>$TMPLOG ; then
-        echores "yes"
-        echocheck "Qt 3 cflags"
-        _inc_qt3=`$_pkg_config qt-mt --cflags 2>>$TMPLOG`
-        echores "$_inc_qt3"
-        echocheck "Qt 3 libs"
-        _ld_qt3=`$_pkg_config qt-mt --libs 2>>$TMPLOG`
-        echores "$_ld_qt3"
-
-        _qt3=yes
-    else
-        $_pkg_config qt-mt --cflags >> $TMPLOG 2>&1
-        echores "no"
-    fi
-
     echocheck "Qt 4"
 
     if $_pkg_config QtCore QtGui --exists 1>/dev/null 2>>$TMPLOG ; then
@@ -647,7 +626,6 @@ INCLUDES=$_inc_extra
 INCLUDES_ASCII=$_inc_x11
 INCLUDES_COMMANDLINE=$_inc_x11
 INCLUDES_GTK2=$_inc_gtk2 $_inc_glib $_inc_x11
-INCLUDES_QT3=$_inc_qt3 $_inc_x11
 INCLUDES_QT4=$_inc_qt4 $_inc_x11
 CCFORDEPS=$_ccfordeps
 CXXFORDEPS=$_cxxfordeps
@@ -656,7 +634,6 @@ LDFLAGS=$_ldflags
 LDFLAGS_ASCII=$_ld_x11
 LDFLAGS_COMMANDLINE=$_ld_x11
 LDFLAGS_GTK2=$_ld_gtk2 $_ld_glib $_ld_x11
-LDFLAGS_QT3=$_ld_qt3 $_ld_x11
 LDFLAGS_QT4=$_ld_qt4 $_ld_x11
 DEBUG=$_debug
 WARNINGS=$_warnings
@@ -665,7 +642,6 @@ PREFIX=$_prefix
 
 HAVE_ASCII=$_ascii
 HAVE_GTK2=$_gtk2
-HAVE_QT3=$_qt3
 HAVE_QT4=$_qt4
 HAVE_COMMANDLINE=$_commandline
 EOF
@@ -680,14 +656,13 @@ done.
 aAutoClick    : $_ascii
 cAutoClick    : $_commandline
 gAutoClick2   : $_gtk2
-qtAutoClick   : $_qt3
 qt4AutoClick  : $_qt4
 
 Installation prefix : $_prefix
 
 EOF
 
-if test "$_ascii$_commandline$_gtk2$_qt3$_qt4" = "nonononono" ; then
+if test "$_ascii$_commandline$_gtk2$_qt4" = "nononono" ; then
     cat << EOF
 None of the xautoclick applications can be build. You need to install the
 development packages of X11, GTK+ and/or QT. Check the documentation of

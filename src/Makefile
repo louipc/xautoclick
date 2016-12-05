@@ -31,10 +31,6 @@ PRGascii	= aautoclick
 OBJSascii	= $(OBJScommon) \
 			  guiascii.o \
 
-PRGqt3		= qtautoclick
-OBJSqt3		= $(OBJScommon) \
-			  guiqt3.o \
-
 PRGqt4		= qt4autoclick
 OBJSqt4		= $(OBJScommon) \
 			  guiqt4.o \
@@ -52,11 +48,6 @@ endif
 ifeq ($(__BUILD_ASCII__),yes)
 INCLUDES	+= $(INCLUDES_ASCII)
 LDFLAGS		+= $(LDFLAGS_ASCII)
-endif
-
-ifeq ($(__BUILD_QT3__),yes)
-INCLUDES	+= $(INCLUDES_QT3)
-LDFLAGS		+= $(LDFLAGS_QT3)
 endif
 
 ifeq ($(__BUILD_QT4__),yes)
@@ -77,9 +68,6 @@ endif
 ifeq ($(HAVE_ASCII),yes)
 	__BUILD_ASCII__=yes $(MAKE) -C . $(PRGascii)
 endif
-ifeq ($(HAVE_QT3),yes)
-	__BUILD_QT3__=yes $(MAKE) -C . $(PRGqt3)
-endif
 ifeq ($(HAVE_QT4),yes)
 	__BUILD_QT4__=yes $(MAKE) -C . $(PRGqt4)
 endif
@@ -92,9 +80,6 @@ $(PRGgtk2):		$(OBJSgtk2)
 
 $(PRGascii):	$(OBJSascii)
 	$(CC) -o $@ $(OBJSascii) $(LDFLAGS)
-
-$(PRGqt3):		$(OBJSqt3)
-	$(CXX) -o $@ $(OBJSqt3) $(LDFLAGS)
 
 $(PRGqt4):		$(OBJSqt4)
 	$(CXX) -o $@ $(OBJSqt4) $(LDFLAGS)
@@ -127,10 +112,6 @@ ifneq ($(OBJSascii),)
 -include $(patsubst %,.deps/%,$(OBJSascii:.o=.d))
 endif
 
-ifneq ($(OBJSqt3),)
--include $(patsubst %,.deps/%,$(OBJSqt3:.o=.d))
-endif
-
 ifneq ($(OBJSqt4),)
 -include $(patsubst %,.deps/%,$(OBJSqt4:.o=.d))
 endif
@@ -149,7 +130,7 @@ SILENCE = @
 
 .PHONY:	clean
 clean:
-	rm -f *.o $(PRGgtk2) $(PRGqt3) $(PRGascii) $(PRGcmdl)
+	rm -f *.o $(PRGgtk2) $(PRGascii) $(PRGcmdl)
 	rm -f guiqt4-moc.cpp $(PRGqt4)
 	rm -rf .deps
 
@@ -166,9 +147,6 @@ install:		all
 ifeq ($(HAVE_GTK2),yes)
 	cp $(PRGgtk2) $(PREFIX)/bin
 endif
-ifeq ($(HAVE_QT3),yes)
-	cp $(PRGqt3) $(PREFIX)/bin
-endif
 ifeq ($(HAVE_QT4),yes)
 	cp $(PRGqt4) $(PREFIX)/bin
 endif
@@ -184,7 +162,6 @@ endif
 uninstall:
 	@echo Uninstalling from $(PREFIX)
 	rm -f $(PREFIX)/bin/$(PRGgtk2)
-	rm -f $(PREFIX)/bin/$(PRGqt3)
 	rm -f $(PREFIX)/bin/$(PRGqt4)
 	rm -f $(PREFIX)/bin/$(PRGascii)
 	rm -f $(PREFIX)/bin/$(PRGcmdl)
