@@ -29,7 +29,7 @@ static Display *display;
 
 static GtkWidget *gAutoClick, *tap_button, *stop_button, *start_button;
 static GtkWidget *predelay_spin, *interval_spin, *random_spin;
-static GtkWidget *nrofclicks_spin;
+static GtkWidget *totalclicks_spin;
 
 void click_mouse_button(void) {
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
@@ -59,7 +59,7 @@ int get_spin_value(spin_t spin) {
         return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(random_spin));
         break;
     case SPIN_NUMBER:
-        return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(nrofclicks_spin));
+        return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(totalclicks_spin));
         break;
     }
 
@@ -125,9 +125,9 @@ static GtkWidget *create_gAutoClick(void) {
   GtkWidget *label10;
   GtkObject *random_spin_adj;
   GtkWidget *hbox5;
-  GtkWidget *nrofclicks_label;
+  GtkWidget *totalclicks_label;
   GtkWidget *label11;
-  GtkObject *nrofclicks_spin_adj;
+  GtkObject *totalclicks_spin_adj;
   GtkWidget *hbox4;
 
   gAutoClick = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -151,7 +151,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (hbox1);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox1, TRUE, TRUE, 0);
 
-  predelay_label = gtk_label_new ("Pre-delay  ");
+  predelay_label = gtk_label_new ("Pre-delay");
   gtk_widget_ref (predelay_label);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "predelay_label", predelay_label,
                             (GtkDestroyNotify) gtk_widget_unref);
@@ -173,7 +173,7 @@ static GtkWidget *create_gAutoClick(void) {
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (predelay_spin);
   gtk_box_pack_start (GTK_BOX (hbox1), predelay_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (predelay_spin, 64, -2);
+  gtk_widget_set_size_request (predelay_spin, 64, -2);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (predelay_spin), TRUE);
 
   hbox2 = gtk_hbox_new (FALSE, 0);
@@ -183,7 +183,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (hbox2);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox2, TRUE, TRUE, 0);
 
-  interval_label = gtk_label_new ("Interval  ");
+  interval_label = gtk_label_new ("Interval");
   gtk_widget_ref (interval_label);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "interval_label", interval_label,
                             (GtkDestroyNotify) gtk_widget_unref);
@@ -204,7 +204,7 @@ static GtkWidget *create_gAutoClick(void) {
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (interval_spin);
   gtk_box_pack_start (GTK_BOX (hbox2), interval_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (interval_spin, 64, -2);
+  gtk_widget_set_size_request (interval_spin, 64, -2);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (interval_spin), TRUE);
 
   hbox3 = gtk_hbox_new (FALSE, 0);
@@ -214,7 +214,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (hbox3);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox3, TRUE, TRUE, 0);
 
-  random_label = gtk_label_new ("Random +/-  ");
+  random_label = gtk_label_new ("Random +/-");
   gtk_widget_ref (random_label);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "random_label", random_label,
                             (GtkDestroyNotify) gtk_widget_unref);
@@ -235,7 +235,7 @@ static GtkWidget *create_gAutoClick(void) {
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (random_spin);
   gtk_box_pack_start (GTK_BOX (hbox3), random_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (random_spin, 64, -2);
+  gtk_widget_set_size_request (random_spin, 64, -2);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (random_spin), TRUE);
 
   hbox5 = gtk_hbox_new (FALSE, 0);
@@ -245,12 +245,12 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (hbox5);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox5, TRUE, TRUE, 0);
 
-  nrofclicks_label = gtk_label_new ("# of clicks  ");
-  gtk_widget_ref (nrofclicks_label);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "nrofclicks_label", nrofclicks_label,
+  totalclicks_label = gtk_label_new ("Total clicks");
+  gtk_widget_ref (totalclicks_label);
+  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "totalclicks_label", totalclicks_label,
                             (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (nrofclicks_label);
-  gtk_box_pack_start (GTK_BOX (hbox5), nrofclicks_label, FALSE, FALSE, 0);
+  gtk_widget_show (totalclicks_label);
+  gtk_box_pack_start (GTK_BOX (hbox5), totalclicks_label, FALSE, FALSE, 0);
 
   label11 = gtk_label_new ("");
   gtk_widget_ref (label11);
@@ -259,15 +259,15 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (label11);
   gtk_box_pack_start (GTK_BOX (hbox5), label11, TRUE, FALSE, 0);
 
-  nrofclicks_spin_adj = gtk_adjustment_new (32, 1, 10240, 1, 10, 0);
-  nrofclicks_spin = gtk_spin_button_new (GTK_ADJUSTMENT (nrofclicks_spin_adj), 1, 0);
-  gtk_widget_ref (nrofclicks_spin);
-  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "nrofclicks_spin", nrofclicks_spin,
+  totalclicks_spin_adj = gtk_adjustment_new (32, 1, 10240, 1, 10, 0);
+  totalclicks_spin = gtk_spin_button_new (GTK_ADJUSTMENT (totalclicks_spin_adj), 1, 0);
+  gtk_widget_ref (totalclicks_spin);
+  gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "totalclicks_spin", totalclicks_spin,
                             (GtkDestroyNotify) gtk_widget_unref);
-  gtk_widget_show (nrofclicks_spin);
-  gtk_box_pack_start (GTK_BOX (hbox5), nrofclicks_spin, FALSE, FALSE, 0);
-  gtk_widget_set_usize (nrofclicks_spin, 64, -2);
-  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (nrofclicks_spin), TRUE);
+  gtk_widget_show (totalclicks_spin);
+  gtk_box_pack_start (GTK_BOX (hbox5), totalclicks_spin, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (totalclicks_spin, 64, -2);
+  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (totalclicks_spin), TRUE);
 
   hbox4 = gtk_hbox_new (FALSE, 0);
   gtk_widget_ref (hbox4);
@@ -276,7 +276,7 @@ static GtkWidget *create_gAutoClick(void) {
   gtk_widget_show (hbox4);
   gtk_box_pack_start (GTK_BOX (vbox1), hbox4, TRUE, TRUE, 0);
 
-  tap_button = gtk_button_new_with_label ("Tap");
+  tap_button = gtk_button_new_with_label ("     Tap     ");
   gtk_widget_ref (tap_button);
   gtk_object_set_data_full (GTK_OBJECT (gAutoClick), "tap_button", tap_button,
                             (GtkDestroyNotify) gtk_widget_unref);
