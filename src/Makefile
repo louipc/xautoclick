@@ -44,10 +44,6 @@ OBJSqt4		= $(OBJScommon) \
 			  guiqt4.o \
 			  guiqt4-moc.o \
 
-PRGfltk		= fltkautoclick
-OBJSfltk	= $(OBJScommon) \
-			  guifltk.o \
-
 PRGcmdl		= cautoclick
 OBJScmdl	= $(OBJScommon) \
 			  guicommandline.o \
@@ -77,11 +73,6 @@ INCLUDES	+= $(INCLUDES_QT4)
 LDFLAGS		+= $(LDFLAGS_QT4)
 endif
 
-ifeq ($(__BUILD_FLTK__),yes)
-INCLUDES	+= $(INCLUDES_FLTK)
-LDFLAGS		+= $(LDFLAGS_FLTK) -lstdc++
-endif
-
 ifeq ($(__BUILD_COMMANDLINE__),yes)
 INCLUDES	+= $(INCLUDES_COMMANDLINE)
 LDFLAGS		+= $(LDFLAGS_COMMANDLINE)
@@ -104,9 +95,6 @@ endif
 ifeq ($(HAVE_QT4),yes)
 	__BUILD_QT4__=yes $(MAKE) -C . $(PRGqt4)
 endif
-ifeq ($(HAVE_FLTK),yes)
-	__BUILD_FLTK__=yes $(MAKE) -C . $(PRGfltk)
-endif
 ifeq ($(HAVE_COMMANDLINE),yes)
 	__BUILD_COMMANDLINE__=yes $(MAKE) -C . $(PRGcmdl)
 endif
@@ -125,9 +113,6 @@ $(PRGqt3):		$(OBJSqt3)
 
 $(PRGqt4):		$(OBJSqt4)
 	$(CXX) -o $@ $(OBJSqt4) $(LDFLAGS)
-
-$(PRGfltk):		$(OBJSfltk)
-	$(CXX) -o $@ $(OBJSfltk) $(LDFLAGS)
 
 $(PRGcmdl):		$(OBJScmdl)
 	$(CC) -o $@ $(OBJScmdl) $(LDFLAGS)
@@ -172,10 +157,6 @@ ifneq ($(OBJSqt4),)
 -include $(patsubst %,.deps/%,$(OBJSqt4:.o=.d))
 endif
 
-ifneq ($(OBJSfltk),)
--include $(patsubst %,.deps/%,$(OBJSfltk:.o=.d))
-endif
-
 SILENCE = @
 
 %.o:	%.c
@@ -191,7 +172,7 @@ SILENCE = @
 .PHONY:	clean
 clean:
 	rm -f *.o $(PRGgtk1) $(PRGgtk2) $(PRGqt3) $(PRGascii) $(PRGcmdl) guigtk2.c
-	rm -f guiqt4-moc.cpp $(PRGqt4) $(PRGfltk)
+	rm -f guiqt4-moc.cpp $(PRGqt4)
 	rm -rf .deps
 
 .PHONY:	distclean
@@ -216,9 +197,6 @@ endif
 ifeq ($(HAVE_QT4),yes)
 	cp $(PRGqt4) $(PREFIX)/bin
 endif
-ifeq ($(HAVE_FLTK),yes)
-	cp $(PRGfltk) $(PREFIX)/bin
-endif
 ifeq ($(HAVE_ASCII),yes)
 	cp $(PRGascii) $(PREFIX)/bin
 endif
@@ -234,7 +212,6 @@ uninstall:
 	rm -f $(PREFIX)/bin/$(PRGgtk2)
 	rm -f $(PREFIX)/bin/$(PRGqt3)
 	rm -f $(PREFIX)/bin/$(PRGqt4)
-	rm -f $(PREFIX)/bin/$(PRGfltk)
 	rm -f $(PREFIX)/bin/$(PRGascii)
 	rm -f $(PREFIX)/bin/$(PRGcmdl)
 	rm -f $(PREFIX)/man/man1/xautoclick.1
