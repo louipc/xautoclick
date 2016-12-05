@@ -28,6 +28,19 @@
 static Display *display;
 static int predelay, interval, randomfactor, numberofclicks, sleeptime;
 
+void help(void) {
+    printf("aautoclick\n\n");
+    printf("p - set pre-delay\n");
+    printf("h - help\n");
+    printf("i - set interval\n");
+    printf("r - set random +/-\n");
+    printf("n - set number of clicks\n");
+    printf("t - tap\n");
+    printf("s - start\n");
+    printf("q - quit\n");
+    printf("\n");
+}
+
 void click_mouse_button(void) {
     XTestFakeButtonEvent(display, 1, True, CurrentTime);
     XTestFakeButtonEvent(display, 1, False, CurrentTime);
@@ -83,16 +96,7 @@ int init_gui(int argc, char **argv) {
     randomfactor   = 64;
     numberofclicks = 32;
 
-    printf("aautoclick\n\n");
-    printf("p - set pre-delay\n");
-    printf("i - set interval\n");
-    printf("r - set random +/-\n");
-    printf("n - set number of clicks\n");
-    printf("t - tap\n");
-    printf("s - start\n");
-    printf("q - quit\n");
-    printf("\n");
-
+    help();
     return 1;
 }
 
@@ -146,6 +150,7 @@ void main_loop(void) {
         case 'r':   read_int(&randomfactor);        break;
         case 'n':   read_int(&numberofclicks);      break;
         case 't':   common_tap_button();            break;
+        case 'h':   help();                         break;
         case 's':   goto run;                       break;
         case 'q':   goto quit_out;                  break;
         default:    printf("unknown command\n");    break;
