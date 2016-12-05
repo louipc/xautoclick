@@ -54,13 +54,6 @@ _ld_x11=
 
 _ascii=no
 
-_gtk1=no
-_gtk_config=
-_inc_gtk1=
-_ld_gtk1=
-_inc_glib=
-_ld_glib=
-
 _qt3=no
 _inc_qt3=
 _ld_qt3=
@@ -516,60 +509,6 @@ _ascii=yes
 # same for command line version
 _commandline=yes
 
-# GTK1
-echocheck "gtk-config"
-if test -z "$_gtk_config" ; then
-    if ( gtk-config --version ) >/dev/null 2>&1 ; then
-        _gtk_config="gtk-config"
-    elif ( gtk12-config --version ) >/dev/null 2>&1 ; then
-        _gtk_config="gtk12-config"
-    else
-        _gtk_config="no"
-    fi
-fi
-echores "$_gtk_config"
-
-
-
-if test "$_gtk_config" != "no" ; then
-    echocheck "GTK cflags"
-    _inc_gtk1=`$_gtk_config --cflags 2>&1`
-    echores "$_inc_gtk1"
-    echocheck "GTK libs"
-    _ld_gtk1=`$_gtk_config --libs 2>&1`
-    echores "$_ld_gtk1"
-
-    echocheck "glib-config"
-    if test -z "$_glib_config" ; then
-        if ( glib-config --version ) >/dev/null 2>&1 ; then
-            _glib_config="glib-config"
-        elif ( glib12-config --version ) >/dev/null 2>&1 ; then
-            _glib_config="glib12-config"
-        else
-            _glib_config="no"
-        fi
-    fi
-    echores "$_glib_config"
-
-    if test "$_glib_config" != "no" ; then
-        echocheck "glib cflags"
-        _inc_glib=`$_glib_config --cflags 2>&1`
-        echores "$_inc_glib"
-        echocheck "glib libs"
-        _ld_glib=`$_glib_config --libs 2>&1`
-        echores "$_ld_glib"
-
-        _gtk1=yes
-
-    else
-        _inc_gtk1=
-        _ld_gtk1=
-        echores "Not building gAutoClick"
-    fi
-
-else
-    echores "Not building gAutoClick"
-fi
 
 
 
@@ -707,7 +646,6 @@ CFLAGS=$_cflags $_optimize $_inttypes $_stdint $_malloc $_unistd
 INCLUDES=$_inc_extra
 INCLUDES_ASCII=$_inc_x11
 INCLUDES_COMMANDLINE=$_inc_x11
-INCLUDES_GTK1=$_inc_gtk1 $_inc_glib $_inc_x11
 INCLUDES_GTK2=$_inc_gtk2 $_inc_glib $_inc_x11
 INCLUDES_QT3=$_inc_qt3 $_inc_x11
 INCLUDES_QT4=$_inc_qt4 $_inc_x11
@@ -717,7 +655,6 @@ LD=$_cc
 LDFLAGS=$_ldflags
 LDFLAGS_ASCII=$_ld_x11
 LDFLAGS_COMMANDLINE=$_ld_x11
-LDFLAGS_GTK1=$_ld_gtk1 $_ld_glib $_ld_x11
 LDFLAGS_GTK2=$_ld_gtk2 $_ld_glib $_ld_x11
 LDFLAGS_QT3=$_ld_qt3 $_ld_x11
 LDFLAGS_QT4=$_ld_qt4 $_ld_x11
@@ -727,7 +664,6 @@ MAKE=$_make
 PREFIX=$_prefix
 
 HAVE_ASCII=$_ascii
-HAVE_GTK1=$_gtk1
 HAVE_GTK2=$_gtk2
 HAVE_QT3=$_qt3
 HAVE_QT4=$_qt4
@@ -743,7 +679,6 @@ done.
 
 aAutoClick    : $_ascii
 cAutoClick    : $_commandline
-gAutoClick    : $_gtk1
 gAutoClick2   : $_gtk2
 qtAutoClick   : $_qt3
 qt4AutoClick  : $_qt4
@@ -752,7 +687,7 @@ Installation prefix : $_prefix
 
 EOF
 
-if test "$_ascii$_commandline$_gtk1$_gtk2$_qt3$_qt4" = "nononononono" ; then
+if test "$_ascii$_commandline$_gtk2$_qt3$_qt4" = "nonononono" ; then
     cat << EOF
 None of the xautoclick applications can be build. You need to install the
 development packages of X11, GTK+ and/or QT. Check the documentation of

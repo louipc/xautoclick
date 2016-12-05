@@ -23,10 +23,6 @@ include config.mak
 OBJScommon	= main.o \
 			  osdep.o \
 
-PRGgtk1		= gautoclick
-OBJSgtk1	= $(OBJScommon) \
-			  guigtk1.o \
-
 PRGgtk2		= gautoclick2
 OBJSgtk2	= $(OBJScommon) \
 			  guigtk2.o \
@@ -47,11 +43,6 @@ OBJSqt4		= $(OBJScommon) \
 PRGcmdl		= cautoclick
 OBJScmdl	= $(OBJScommon) \
 			  guicommandline.o \
-
-ifeq ($(__BUILD_GTK1__),yes)
-INCLUDES	+= $(INCLUDES_GTK1)
-LDFLAGS		+= $(LDFLAGS_GTK1)
-endif
 
 ifeq ($(__BUILD_GTK2__),yes)
 INCLUDES	+= $(INCLUDES_GTK2)
@@ -80,9 +71,6 @@ endif
 
 .PHONY:	all
 all:
-ifeq ($(HAVE_GTK1),yes)
-	__BUILD_GTK1__=yes $(MAKE) -C . $(PRGgtk1)
-endif
 ifeq ($(HAVE_GTK2),yes)
 	__BUILD_GTK2__=yes $(MAKE) -C . $(PRGgtk2)
 endif
@@ -99,9 +87,6 @@ ifeq ($(HAVE_COMMANDLINE),yes)
 	__BUILD_COMMANDLINE__=yes $(MAKE) -C . $(PRGcmdl)
 endif
 
-$(PRGgtk1):		$(OBJSgtk1)
-	$(CC) -o $@ $(OBJSgtk1) $(LDFLAGS)
-
 $(PRGgtk2):		$(OBJSgtk2)
 	$(CC) -o $@ $(OBJSgtk2) $(LDFLAGS)
 
@@ -116,9 +101,6 @@ $(PRGqt4):		$(OBJSqt4)
 
 $(PRGcmdl):		$(OBJScmdl)
 	$(CC) -o $@ $(OBJScmdl) $(LDFLAGS)
-
-guigtk2.c:
-	ln -s guigtk1.c guigtk2.c
 
 guiqt4-moc.cpp:	guiqt4.h
 	moc-qt4 -oguiqt4-moc.cpp guiqt4.h
@@ -136,10 +118,6 @@ config.mak:		configure
 	@echo "has changed."
 	@echo
 	@exit 1
-
-ifneq ($(OBJSgtk1),)
--include $(patsubst %,.deps/%,$(OBJSgtk1:.o=.d))
-endif
 
 ifneq ($(OBJSgtk2),)
 -include $(patsubst %,.deps/%,$(OBJSgtk2:.o=.d))
@@ -171,7 +149,7 @@ SILENCE = @
 
 .PHONY:	clean
 clean:
-	rm -f *.o $(PRGgtk1) $(PRGgtk2) $(PRGqt3) $(PRGascii) $(PRGcmdl) guigtk2.c
+	rm -f *.o $(PRGgtk2) $(PRGqt3) $(PRGascii) $(PRGcmdl)
 	rm -f guiqt4-moc.cpp $(PRGqt4)
 	rm -rf .deps
 
@@ -185,9 +163,6 @@ install:		all
 	@echo Installing to $(PREFIX)
 	if test ! -d $(PREFIX)/bin ; then mkdir -p $(PREFIX)/bin ; fi
 	if test ! -d $(PREFIX)/man/man1 ; then mkdir -p $(PREFIX)/man/man1 ; fi
-ifeq ($(HAVE_GTK1),yes)
-	cp $(PRGgtk1) $(PREFIX)/bin
-endif
 ifeq ($(HAVE_GTK2),yes)
 	cp $(PRGgtk2) $(PREFIX)/bin
 endif
@@ -208,7 +183,6 @@ endif
 .PHONY: uninstall
 uninstall:
 	@echo Uninstalling from $(PREFIX)
-	rm -f $(PREFIX)/bin/$(PRGgtk1)
 	rm -f $(PREFIX)/bin/$(PRGgtk2)
 	rm -f $(PREFIX)/bin/$(PRGqt3)
 	rm -f $(PREFIX)/bin/$(PRGqt4)
