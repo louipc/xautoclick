@@ -2,6 +2,12 @@
 <B>NEWS</B>
 <P>
 
+<div class="news">
+unreleased
+<p>
+* Remove fltk, gtk1, and qt3 support
+</div>
+
 <DIV CLASS="news">
 v0.31 is released. <P>
 Changes in this version:
