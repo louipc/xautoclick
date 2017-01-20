@@ -466,7 +466,7 @@ cat > $TMPC << EOF
 #include <X11/Xlib.h>
 int main(void) { (void) XCreateWindow(0,0,0,0,0,0,0,0,0,0,0,0); return 0; }
 EOF
-for i in /usr/X11R6/lib /usr/lib/X11R6 /usr/X11/lib /usr/lib32 /usr/openwin/lib /usr/X11R6/lib64 /usr/lib ; do
+for i in /usr/lib /usr/X11R6/lib /usr/lib/X11R6 /usr/X11/lib /usr/lib32 /usr/openwin/lib /usr/X11R6/lib64 ; do
     _ld_x11="-L$i -lX11 -lXext"
     if test -d "$i" && cc_check $_inc_x11 $_ld_x11 ; then
         _x11=yes
