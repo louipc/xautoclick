@@ -18,7 +18,7 @@
  *
  */
 
-#include "guiqt4.h"
+#include "qt4.h"
 
 extern "C" {
 #include "main.h"

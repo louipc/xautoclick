@@ -25,20 +25,20 @@ OBJScommon	= main.o \
 
 PRGgtk2		= gautoclick2
 OBJSgtk2	= $(OBJScommon) \
-			  guigtk2.o \
+			  gtk2.o \
 
 PRGascii	= aautoclick
 OBJSascii	= $(OBJScommon) \
-			  guiascii.o \
+			  ascii.o \
 
 PRGqt4		= qt4autoclick
 OBJSqt4		= $(OBJScommon) \
-			  guiqt4.o \
-			  guiqt4-moc.o \
+			  qt4.o \
+			  qt4-moc.o \
 
 PRGcmdl		= cautoclick
 OBJScmdl	= $(OBJScommon) \
-			  guicommandline.o \
+			  commandline.o \
 
 ifeq ($(__BUILD_GTK2__),yes)
 INCLUDES	+= $(INCLUDES_GTK2)
@@ -87,8 +87,8 @@ $(PRGqt4):		$(OBJSqt4)
 $(PRGcmdl):		$(OBJScmdl)
 	$(CC) -o $@ $(OBJScmdl) $(LDFLAGS)
 
-guiqt4-moc.cpp:	guiqt4.h
-	moc-qt4 -oguiqt4-moc.cpp guiqt4.h
+qt4-moc.cpp:	qt4.h
+	moc-qt4 -oqt4-moc.cpp qt4.h
 
 #strip:	$(PRG)
 #	strip $(PRG)
@@ -131,7 +131,7 @@ SILENCE = @
 .PHONY:	clean
 clean:
 	rm -f *.o $(PRGgtk2) $(PRGascii) $(PRGcmdl)
-	rm -f guiqt4-moc.cpp $(PRGqt4)
+	rm -f qt4-moc.cpp $(PRGqt4)
 	rm -rf .deps
 
 .PHONY:	distclean
