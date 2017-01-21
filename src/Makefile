@@ -1,4 +1,4 @@
-# 
+#
 # xAutoClick
 #
 # Copyright (C) 2006, 2010 Ivo van Poorten
@@ -36,6 +36,16 @@ OBJSqt4		= $(OBJScommon) \
 			  qt4.o \
 			  qt4-moc.o \
 
+PRGqt5		= qt5autoclick
+OBJSqt5		= $(OBJScommon) \
+			  qt5.o \
+			  qt5-moc.o \
+
+PRGqt5		= qt5autoclick
+OBJSqt5		= $(OBJScommon) \
+			  guiqt5.o \
+			  guiqt5-moc.o \
+
 PRGcmdl		= cautoclick
 OBJScmdl	= $(OBJScommon) \
 			  commandline.o \
@@ -55,6 +65,11 @@ INCLUDES	+= $(INCLUDES_QT4)
 LDFLAGS		+= $(LDFLAGS_QT4)
 endif
 
+ifeq ($(__BUILD_QT5__),yes)
+INCLUDES	+= $(INCLUDES_QT5)
+LDFLAGS		+= $(LDFLAGS_QT5) -fPIC
+endif
+
 ifeq ($(__BUILD_COMMANDLINE__),yes)
 INCLUDES	+= $(INCLUDES_COMMANDLINE)
 LDFLAGS		+= $(LDFLAGS_COMMANDLINE)
@@ -71,6 +86,9 @@ endif
 ifeq ($(HAVE_QT4),yes)
 	__BUILD_QT4__=yes $(MAKE) -C . $(PRGqt4)
 endif
+ifeq ($(HAVE_QT5),yes)
+	__BUILD_QT5__=yes $(MAKE) -C . $(PRGqt5)
+endif
 ifeq ($(HAVE_COMMANDLINE),yes)
 	__BUILD_COMMANDLINE__=yes $(MAKE) -C . $(PRGcmdl)
 endif
@@ -84,11 +102,20 @@ $(PRGascii):	$(OBJSascii)
 $(PRGqt4):		$(OBJSqt4)
 	$(CXX) -o $@ $(OBJSqt4) $(LDFLAGS)
 
+$(PRGqt5):		$(OBJSqt5)
+	$(CXX) -o $@ $(OBJSqt5) $(LDFLAGS)
+
 $(PRGcmdl):		$(OBJScmdl)
 	$(CC) -o $@ $(OBJScmdl) $(LDFLAGS)
 
 qt4-moc.cpp:	qt4.h
 	moc-qt4 -oqt4-moc.cpp qt4.h
+
+qt5-moc.cpp:	qt5.h
+	moc-qt5 -oqt5-moc.cpp qt5.h
+
+guiqt5-moc.cpp:	guiqt5.h
+	moc-qt5 -oguiqt5-moc.cpp guiqt5.h
 
 #strip:	$(PRG)
 #	strip $(PRG)
@@ -116,6 +143,10 @@ ifneq ($(OBJSqt4),)
 -include $(patsubst %,.deps/%,$(OBJSqt4:.o=.d))
 endif
 
+ifneq ($(OBJSqt5),)
+-include $(patsubst %,.deps/%,$(OBJSqt5:.o=.d))
+endif
+
 SILENCE = @
 
 %.o:	%.c
@@ -124,14 +155,15 @@ SILENCE = @
 	$(CCFORDEPS) $(CFLAGS) $(INCLUDES) $*.c 1>.deps/$*.d
 
 %.o:	%.cpp
-	$(CXX) -c $(CFLAGS) $(INCLUDES) $*.cpp -o $*.o $(DEBUG) $(WARNINGS)
+	$(CXX) -c $(CFLAGS) -fPIC $(INCLUDES) $*.cpp -o $*.o $(DEBUG) $(WARNINGS)
 	mkdir -p .deps
-	$(CXXFORDEPS) $(CFLAGS) $(INCLUDES) $*.cpp 1>.deps/$*.d
+	$(CXXFORDEPS) $(CFLAGS) -fPIC $(INCLUDES) $*.cpp 1>.deps/$*.d
 
 .PHONY:	clean
 clean:
 	rm -f *.o $(PRGgtk2) $(PRGascii) $(PRGcmdl)
 	rm -f qt4-moc.cpp $(PRGqt4)
+	rm -f qt5-moc.cpp $(PRGqt5)
 	rm -rf .deps
 
 .PHONY:	distclean
@@ -150,6 +182,9 @@ endif
 ifeq ($(HAVE_QT4),yes)
 	cp $(PRGqt4) $(PREFIX)/bin
 endif
+ifeq ($(HAVE_QT5),yes)
+	cp $(PRGqt5) $(PREFIX)/bin
+endif
 ifeq ($(HAVE_ASCII),yes)
 	cp $(PRGascii) $(PREFIX)/bin
 endif
@@ -163,6 +198,7 @@ uninstall:
 	@echo Uninstalling from $(PREFIX)
 	rm -f $(PREFIX)/bin/$(PRGgtk2)
 	rm -f $(PREFIX)/bin/$(PRGqt4)
+	rm -f $(PREFIX)/bin/$(PRGqt5)
 	rm -f $(PREFIX)/bin/$(PRGascii)
 	rm -f $(PREFIX)/bin/$(PRGcmdl)
 	rm -f $(PREFIX)/man/man1/xautoclick.1

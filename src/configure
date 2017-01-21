@@ -58,6 +58,10 @@ _qt4=no
 _inc_qt4=
 _ld_qt4=
 
+_qt5=no
+_inc_qt5=
+_ld_qt5=
+
 _gtk2=no
 _pkg_config=
 _inc_gtk2=
@@ -562,10 +566,28 @@ if test "$_pkg_config" != "no" ; then
         $_pkg_config QtCore QtGui --cflags >> $TMPLOG 2>&1
         echores "no"
     fi
+
+    echocheck "Qt 5"
+
+    if $_pkg_config Qt5Widgets --exists 1>/dev/null 2>>$TMPLOG ; then
+        echores "yes"
+        echocheck "Qt 5 cflags"
+        _inc_qt5=`$_pkg_config Qt5Widgets --cflags 2>>$TMPLOG`
+        echores "$_inc_qt5"
+        echocheck "Qt 5 libs"
+        _ld_qt5=`$_pkg_config Qt5Widgets --libs 2>>$TMPLOG`
+        echores "$_ld_qt5"
+
+        _qt5=yes
+    else
+        $_pkg_config Qt5Widgets --cflags >> $TMPLOG 2>&1
+        echores "no"
+    fi
 else
     echores "Not building gAutoClick2"
     echores "Not building qtAutoClick"
     echores "Not building qt4AutoClick"
+    echores "Not building qt5AutoClick"
 fi
 
 
@@ -627,6 +649,7 @@ INCLUDES_ASCII=$_inc_x11
 INCLUDES_COMMANDLINE=$_inc_x11
 INCLUDES_GTK2=$_inc_gtk2 $_inc_glib $_inc_x11
 INCLUDES_QT4=$_inc_qt4 $_inc_x11
+INCLUDES_QT5=$_inc_qt5 $_inc_x11
 CCFORDEPS=$_ccfordeps
 CXXFORDEPS=$_cxxfordeps
 LD=$_cc
@@ -635,6 +658,7 @@ LDFLAGS_ASCII=$_ld_x11
 LDFLAGS_COMMANDLINE=$_ld_x11
 LDFLAGS_GTK2=$_ld_gtk2 $_ld_glib $_ld_x11
 LDFLAGS_QT4=$_ld_qt4 $_ld_x11
+LDFLAGS_QT5=$_ld_qt5 $_ld_x11
 DEBUG=$_debug
 WARNINGS=$_warnings
 MAKE=$_make
@@ -643,6 +667,7 @@ PREFIX=$_prefix
 HAVE_ASCII=$_ascii
 HAVE_GTK2=$_gtk2
 HAVE_QT4=$_qt4
+HAVE_QT5=$_qt5
 HAVE_COMMANDLINE=$_commandline
 EOF
 
@@ -657,15 +682,16 @@ aAutoClick    : $_ascii
 cAutoClick    : $_commandline
 gAutoClick2   : $_gtk2
 qt4AutoClick  : $_qt4
+qt5AutoClick  : $_qt5
 
 Installation prefix : $_prefix
 
 EOF
 
-if test "$_ascii$_commandline$_gtk2$_qt4" = "nononono" ; then
+if test "$_ascii$_commandline$_gtk2$_qt4$_qt5" = "nonononono" ; then
     cat << EOF
 None of the xautoclick applications can be build. You need to install the
-development packages of X11, GTK+ and/or QT. Check the documentation of
+development packages of X11, GTK+ or QT. Check the documentation of
 your distribution for details.
 
 EOF
